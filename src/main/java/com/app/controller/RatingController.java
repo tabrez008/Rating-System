@@ -32,7 +32,7 @@ public class RatingController {
 		throw new CustomException(
 				"Invaid UserId" ,
 				"Please Provide Valid UserId",
-				"Add User in the User Table");
+				"Add Rating in the Rating Table");
 	}
 	
 	@PostMapping("/updateRating")
@@ -40,6 +40,14 @@ public class RatingController {
 		
 		Integer ratingFrom = rating.getRatingFrom();
 		AverageRating newAvgRatingObj ;
+		Double nextRating = rating.getRating();
+		if(nextRating > 5) {
+			throw new CustomException(
+					"Invaid Rating" ,
+					"Please Provide Valid Rating",
+					"Rating Can Be Only Between 1 To 5 Inclusive"
+					);
+		}
 		ratingTask.saveRating(rating);
 		
 		if(ratingFrom == 1) {
