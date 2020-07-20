@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.RatingService.RatingTask;
+import com.app.exception.CustomException;
 import com.app.model.AverageRating;
 import com.app.model.Rating;
 
@@ -27,7 +28,11 @@ public class RatingController {
 		if(avgRating != null) {
 			return new ResponseEntity<AverageRating>(avgRating , HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
+		throw new CustomException(
+				"Invaid UserId" ,
+				"Please Provide Valid UserId",
+				"Add User in the User Table");
 	}
 	
 	@PostMapping("/updateRating")
@@ -73,12 +78,18 @@ public class RatingController {
 				Long newRideCount = newAvgRatingObj.getRideCount() + 1;
 				Double newRatingSum = newAvgRatingObj.getRatingSum() + rating.getRating();
 				Double newAvgRating = newRatingSum / newRideCount;
+				newAvgRatingObj.setAvgRating(newAvgRating);
+				newAvgRatingObj.setRatingSum(newRatingSum);
+				newAvgRatingObj.setRideCount(newRideCount);
 				ratingTask.saveAverageRating(newAvgRatingObj);
 			}
 		}
 		else 
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		
+			throw new CustomException(
+					"Invaid RatingFrom Input" ,
+					"Please Provide Valid Rating Input",
+					"Please Note That It can Only Take Input As 1 Or 2"
+					);
 		
 		return new ResponseEntity<AverageRating>(newAvgRatingObj , HttpStatus.CREATED);
 	}
